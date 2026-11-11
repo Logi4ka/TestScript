@@ -1,30 +1,28 @@
 
-name: Package APK for ChatGPT
+name: Publish crackme binary
 
 on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  actions: write
+  contents: write
 
 jobs:
-  package:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check source file
+      - name: Publish binary as release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          test -f crackme.zip
-          ls -lh crackme.zip
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: crackme-transfer
-          path: crackme.zip
-          if-no-files-found: error
-          retention-days: 7
+          if gh release view crackme-analysis >/dev/null 2>&1; then
+            gh release upload crackme-analysis crackme.so --clobber
+          else
+            gh release create crackme-analysis crackme.so \
+              --title "Crackme binary" \
+              --notes "Binary published for analysis"
+          fi
