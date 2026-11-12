@@ -1,0 +1,30 @@
+
+name: Upload Analysis Archive
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify archive
+        run: |
+          ls -lh crackme_analyze.zip
+          test -s crackme_analyze.zip
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: crackme-analysis
+          path: crackme_analyze.zip
+          if-no-files-found: error
+          retention-days: 7
