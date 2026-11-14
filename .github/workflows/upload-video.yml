@@ -4,7 +4,18 @@ name: Upload DBD Gameplay Video
 on:
   push:
     paths:
-      - 'video/**'
+      - '**/*.mp4'
+      - '**/*.MP4'
+      - '**/*.mkv'
+      - '**/*.MKV'
+      - '**/*.mov'
+      - '**/*.MOV'
+      - '**/*.webm'
+      - '**/*.WEBM'
+      - '**/*.avi'
+      - '**/*.AVI'
+      - '.github/workflows/upload-video.yml'
+
   workflow_dispatch:
 
 permissions:
@@ -20,11 +31,28 @@ jobs:
         with:
           lfs: true
 
+      - name: Find video files
+        shell: bash
+        run: |
+          echo "Searching for video files..."
+          find . -type f \( \
+            -iname "*.mp4" -o \
+            -iname "*.mkv" -o \
+            -iname "*.mov" -o \
+            -iname "*.webm" -o \
+            -iname "*.avi" \
+          \) -not -path "./.git/*"
+
       - name: Upload gameplay video
         uses: actions/upload-artifact@v4
         with:
           name: dbd-gameplay-video
-          path: video/**
+          path: |
+            **/*.mp4
+            **/*.mkv
+            **/*.mov
+            **/*.webm
+            **/*.avi
           if-no-files-found: error
           compression-level: 0
           retention-days: 3
