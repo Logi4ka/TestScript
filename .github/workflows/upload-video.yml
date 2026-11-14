@@ -1,0 +1,30 @@
+
+name: Upload DBD Gameplay Video
+
+on:
+  push:
+    paths:
+      - 'video/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Upload gameplay video
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbd-gameplay-video
+          path: video/**
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 3
